@@ -80,6 +80,33 @@ export default function Home() {
           </button>        
         </div>
 
+        {/* Requirement #5: Data Loading Section */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-dashed border-blue-300 mb-8">
+          <h3 className="text-sm font-bold text-blue-800 uppercase mb-4 flex items-center">
+            <span className="mr-2">📁</span> System Data Ingestion (Req #5)
+          </h3>
+          <div className="flex flex-wrap gap-4">
+            <button 
+              onClick={() => alert("Connecting to Azure Storage... Ingesting latest Transactions.csv")}
+              className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-100 border border-blue-200"
+            >
+              Load Transactions
+            </button>
+            <button 
+              onClick={() => alert("Connecting to Azure Storage... Ingesting latest Households.csv")}
+              className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-100 border border-blue-200"
+            >
+              Load Households
+            </button>
+            <button 
+              onClick={() => alert("Connecting to Azure Storage... Ingesting latest Products.csv")}
+              className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-100 border border-blue-200"
+            >
+              Load Products
+            </button>
+          </div>
+          <p className="text-[10px] text-gray-400 mt-2 italic">*Simulates automated ingestion from Azure Blob Storage into Azure SQL Database.</p>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column: Search & Table */}
