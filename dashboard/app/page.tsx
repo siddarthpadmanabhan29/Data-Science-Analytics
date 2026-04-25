@@ -21,7 +21,7 @@ export default function Home() {
     try {
       const response = await fetch(`https://8451-kroger-retail-fsgqc8byhwaga4dc.westus3-01.azurewebsites.net/api/transactions/household/${hshd}`);      
       if (!response.ok) {
-        throw new Error(`Java Server responded with status: ${response.status}`);
+        throw new Error(`Azure API responded with status: ${response.status}`);
       }
 
       const data = await response.json();
@@ -29,7 +29,7 @@ export default function Home() {
       setTransactions(data);
     } catch (err) {
       console.error(err);
-      alert("CONNECTION FAILED: Is your Java app running on port 8080?");
+      alert("CONNECTION FAILED: Azure API is not responding.");
     } finally {
       setLoading(false);
     }
