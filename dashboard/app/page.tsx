@@ -19,7 +19,7 @@ export default function Home() {
 
     setLoading(true);
     try {
-      const response = await fetch(`https://8451-kroger-retail.azurewebsites.net/api/transactions/household/${hshd}`);      
+      const response = await fetch(`https://8451-kroger-retail-fsgqc8byhwaga4dc.westus3-01.azurewebsites.net/api/transactions/household/${hshd}`);      
       if (!response.ok) {
         throw new Error(`Java Server responded with status: ${response.status}`);
       }
