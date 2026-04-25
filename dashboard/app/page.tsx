@@ -91,7 +91,7 @@ export default function Home() {
         {/* Req #5: Data Loading Section */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-dashed border-blue-300 mb-8">
           <h3 className="text-sm font-bold text-blue-800 uppercase mb-4 flex items-center">
-            <span className="mr-2">📁</span> System Data Ingestion (Req #5)
+            <span className="mr-2"></span>Data Load Ingestion
           </h3>
           <div className="flex flex-wrap gap-4">
             {["Transactions", "Households", "Products"].map((type) => (
@@ -107,24 +107,24 @@ export default function Home() {
               </button>
             ))}
           </div>
-          <p className="text-[10px] text-gray-400 mt-2 italic">*Triggers manual re-fetch from Azure SQL to verify dataset updates.</p>
+          <p className="text-[10px] text-gray-400 mt-2 italic">Triggers manual re-fetch from Azure SQL to verify dataset updates.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Dashboard Area */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Search Box */}
-            <div className="bg-blue-600 p-6 rounded-2xl shadow-lg flex gap-4 items-center">
+            {/* Search Box*/}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex gap-4 items-center">
               <input 
                 type="number" 
                 value={hshd} 
                 onChange={(e) => setHshd(e.target.value)}
-                className="p-3 rounded-xl w-full text-lg focus:outline-none text-blue-900" 
-                placeholder="Enter Household ID (e.g., 10)" 
+                className="p-3 rounded-xl w-full text-lg focus:ring-2 focus:ring-blue-500 outline-none text-blue-900 bg-gray-50 border border-gray-200" 
+                placeholder="Enter Household ID (e.g., 208)" 
               />
               <button 
                 onClick={handleSearch} 
-                className="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-black py-3 px-8 rounded-xl transition-all whitespace-nowrap"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-all whitespace-nowrap shadow-md"
               >
                 {loading ? 'LOADING...' : 'PULL DATA'}
               </button>
@@ -132,7 +132,7 @@ export default function Home() {
 
             {/* Table */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="p-4 border-b border-gray-100 bg-gray-50 font-bold text-gray-600">Transaction Ledger (Req #3 & #4)</div>
+              <div className="p-4 border-b border-gray-100 bg-gray-50 font-bold text-gray-600">Transaction Data</div>
               <div className="max-h-[400px] overflow-y-auto">
                 <table className="w-full text-left">
                   <thead className="sticky top-0 bg-white shadow-sm">
@@ -193,7 +193,7 @@ export default function Home() {
             </div>
 
             <div className="bg-blue-900 p-6 rounded-2xl shadow-xl text-white">
-              <h3 className="font-bold mb-2 text-sm uppercase tracking-widest opacity-80">Churn Analysis (Req #8)</h3>
+              <h3 className="font-bold mb-2 text-sm uppercase tracking-widest opacity-80">Churn Prediction</h3>
               <p className="text-blue-200 text-xs mb-4 italic">Based on trip volume and spend density.</p>
               <div className="text-3xl font-black">{transactions.length > 50 ? 'LOW RISK' : 'HIGH RISK'}</div>
               <div className="mt-4 h-2 bg-blue-800 rounded-full overflow-hidden">
