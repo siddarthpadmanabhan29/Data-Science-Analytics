@@ -87,25 +87,34 @@ export default function Home() {
           </h3>
           <div className="flex flex-wrap gap-4">
             <button 
-              onClick={() => alert("Connecting to Azure Storage... Ingesting latest Transactions.csv")}
+              onClick={async () => {
+                alert("Syncing with Azure SQL to fetch latest Transactions...");
+                await handleSearch(); 
+              }}
               className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-100 border border-blue-200"
             >
               Load Transactions
             </button>
             <button 
-              onClick={() => alert("Connecting to Azure Storage... Ingesting latest Households.csv")}
+              onClick={async () => {
+                alert("Syncing with Azure SQL to fetch latest Households...");
+                await handleSearch();
+              }}
               className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-100 border border-blue-200"
             >
               Load Households
             </button>
             <button 
-              onClick={() => alert("Connecting to Azure Storage... Ingesting latest Products.csv")}
+              onClick={async () => {
+                alert("Syncing with Azure SQL to fetch latest Products...");
+                await handleSearch();
+              }}
               className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-100 border border-blue-200"
             >
               Load Products
             </button>
           </div>
-          <p className="text-[10px] text-gray-400 mt-2 italic">*Simulates automated ingestion from Azure Blob Storage into Azure SQL Database.</p>
+          <p className="text-[10px] text-gray-400 mt-2 italic">*Triggers a manual re-fetch of datasets from Azure SQL to ensure the application reflects the most recent updates.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
