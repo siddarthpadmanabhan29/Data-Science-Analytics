@@ -18,6 +18,6 @@ public class TransactionController {
 
     @GetMapping("/household/{hshdNum}")
     public List<Transaction> getTransactionsByHousehold(@PathVariable Integer hshdNum) {
-        return repository.findByHshdNumOrderByDateAsc(hshdNum);
+        return repository.findByHshdNumOrderByBasketNumAscDateAsc(hshdNum);
     }
 }
