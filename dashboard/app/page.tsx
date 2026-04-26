@@ -44,7 +44,7 @@ export default function Home() {
     transactions.forEach((txn: any) => {
       const d = new Date(txn.date);
       const weekNum = Math.ceil(d.getDate() / 7);
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')} W${weekNum}`;
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       map[key] = (map[key] || 0) + txn.spend;
     });
     return Object.entries(map)
