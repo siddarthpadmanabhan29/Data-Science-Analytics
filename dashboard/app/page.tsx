@@ -120,7 +120,7 @@ export default function Home() {
                 value={hshd} 
                 onChange={(e) => setHshd(e.target.value)}
                 className="p-3 rounded-xl w-full text-lg focus:ring-2 focus:ring-blue-500 outline-none text-blue-900 bg-gray-50 border border-gray-200" 
-                placeholder="Enter Household ID (e.g., 208)" 
+                placeholder="Enter Household ID" 
               />
               <button 
                 onClick={handleSearch} 
