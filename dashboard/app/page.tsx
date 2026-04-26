@@ -218,18 +218,17 @@ const churnBarColor = churnScore >= 65 ? 'bg-green-400' : churnScore >= 35 ? 'bg
                   const total = chartData.reduce((s, c) => s + c.value, 0);
                   const max = chartData[0]?.value || 1;
                   return chartData.map((cat, i) => (
-                    <div key={cat.name} className="flex items-center gap-2 text-xs">
-                      <div className="w-20 text-right text-gray-500 truncate">{cat.name}</div>
-                      <div className="flex-1 bg-gray-100 rounded-full h-3 overflow-hidden">
+                    <div key={cat.name}>
+                      <div className="flex justify-between text-xs text-gray-500 mb-1">
+                        <span className="font-medium text-gray-700">{cat.name}</span>
+                        <span>{total > 0 ? Math.round((cat.value / total) * 100) : 0}% &nbsp; ${cat.value.toFixed(2)}</span>
+                      </div>
+                      <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
                         <div
                           className="h-full rounded-full transition-all duration-500"
                           style={{ width: `${(cat.value / max) * 100}%`, backgroundColor: COLORS[i] }}
                         />
                       </div>
-                      <div className="w-8 text-right font-medium text-gray-700">
-                        {total > 0 ? Math.round((cat.value / total) * 100) : 0}%
-                      </div>
-                      <div className="w-14 text-right text-gray-400">${cat.value.toFixed(2)}</div>
                     </div>
                   ));
                 })()}
