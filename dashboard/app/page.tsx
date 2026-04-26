@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react';
+import { useState, useMemo} from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, Legend } from 'recharts';
 
 export default function Home() {
@@ -42,6 +42,34 @@ export default function Home() {
   const totalSpend = transactions.reduce((sum, txn: any) => sum + txn.spend, 0);
   const totalBaskets = new Set(transactions.map((t: any) => t.basketNum)).size;
   const avgBasket = totalBaskets > 0 ? totalSpend / totalBaskets : 0;
+  const weeklySpend = useMemo(() => {
+  const map: { [key: string]: number } = {};
+  transactions.forEach((txn: any) => {
+    const d = new Date(txn.date);
+    const weekNum = Math.ceil(d.getDate() / 7);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')} W${weekNum}`;
+    map[key] = (map[key] || 0) + txn.spend;
+  });
+  return Object.entries(map)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([week, total]) => ({ week, total }));
+}, [transactions]);
+
+const churnScore = useMemo(() => {
+  if (transactions.length === 0) return 0;
+  const dates = transactions.map((t: any) => new Date(t.date).getTime()).filter(Boolean);
+  const daysSinceLast = dates.length
+    ? Math.floor((Date.now() - Math.max(...dates)) / 86400000)
+    : 30;
+  const recency = Math.max(0, Math.min(1, (30 - daysSinceLast) / 30));
+  const frequency = Math.min(1, totalBaskets / 20);
+  const spend = Math.min(1, totalSpend / 500);
+  return Math.round((recency * 0.4 + frequency * 0.35 + spend * 0.25) * 100);
+}, [transactions, totalBaskets, totalSpend]);
+
+const churnLabel = churnScore >= 65 ? 'Low Risk' : churnScore >= 35 ? 'Medium Risk' : 'High Risk';
+const churnColor = churnScore >= 65 ? 'text-green-400' : churnScore >= 35 ? 'text-yellow-400' : 'text-red-400';
+const churnBarColor = churnScore >= 65 ? 'bg-green-400' : churnScore >= 35 ? 'bg-yellow-400' : 'bg-red-400';
 
   const commodityMap: { [key: string]: number } = {};
   transactions.forEach((txn: any) => {
@@ -160,53 +188,74 @@ export default function Home() {
 
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-              <h3 className="font-bold text-gray-700 mb-4 text-sm uppercase tracking-wider text-center">Engagement Trend</h3>
-              <div className="h-[250px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={transactions} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                    {/* Added X-Axis labels for time clarity */}
-                    <XAxis dataKey="date" tick={{fontSize: 10}} minTickGap={30} stroke="#94a3b8" />
-                    {/* Added Y-Axis to show dollar scale */}
-                    <YAxis tick={{fontSize: 10}} stroke="#94a3b8" tickFormatter={(value) => `$${value}`} />
-                    <Tooltip 
-                      formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Spend']}
-                      contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} 
-                    />
-                    <Legend verticalAlign="top" height={36}/>
-                    <Line name="Spend per Item" type="monotone" dataKey="spend" stroke="#1e40af" strokeWidth={2} dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
+            <h3 className="font-bold text-gray-700 mb-4 text-sm uppercase tracking-wider text-center">Engagement Trend</h3>
+            <div className="h-[250px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={weeklySpend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                  <XAxis dataKey="week" tick={{ fontSize: 9 }} minTickGap={20} stroke="#94a3b8" />
+                  <YAxis tick={{ fontSize: 10 }} stroke="#94a3b8" tickFormatter={(v) => `$${v}`} />
+                  <Tooltip
+                    formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Weekly Spend']}
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                  />
+                  <Line name="Weekly Spend" type="monotone" dataKey="total" stroke="#1e40af" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
+          </div>
 
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
               <h3 className="font-bold text-gray-700 mb-4 text-sm uppercase tracking-wider">Top Spend Categories</h3>
-              <div className="h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={chartData} layout="vertical">
-                    <XAxis type="number" hide />
-                    <YAxis dataKey="name" type="category" width={80} style={{fontSize: '10px', fontWeight: 'bold'}} />
-                    <Tooltip 
-                      cursor={{fill: 'transparent'}} 
-                      formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Total Category Spend']}
-                    />
-                    <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={20}>
-                      {chartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
+              <div className="space-y-3">
+                {(() => {
+                  const total = chartData.reduce((s, c) => s + c.value, 0);
+                  const max = chartData[0]?.value || 1;
+                  return chartData.map((cat, i) => (
+                    <div key={cat.name} className="flex items-center gap-2 text-xs">
+                      <div className="w-20 text-right text-gray-500 truncate">{cat.name}</div>
+                      <div className="flex-1 bg-gray-100 rounded-full h-3 overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-500"
+                          style={{ width: `${(cat.value / max) * 100}%`, backgroundColor: COLORS[i] }}
+                        />
+                      </div>
+                      <div className="w-8 text-right font-medium text-gray-700">
+                        {total > 0 ? Math.round((cat.value / total) * 100) : 0}%
+                      </div>
+                      <div className="w-14 text-right text-gray-400">${cat.value.toFixed(2)}</div>
+                    </div>
+                  ));
+                })()}
+              </div>
+              <div className="text-right text-[10px] text-gray-400 mt-3">
+                Total: <span className="font-bold text-gray-600">${chartData.reduce((s, c) => s + c.value, 0).toFixed(2)}</span>
               </div>
             </div>
 
             <div className="bg-blue-900 p-6 rounded-2xl shadow-xl text-white">
-              <h3 className="font-bold mb-2 text-sm uppercase tracking-widest opacity-80">Churn Prediction</h3>
-              <p className="text-blue-200 text-xs mb-4 italic">Based on trip volume and spend density.</p>
-              <div className="text-3xl font-black">{transactions.length > 50 ? 'LOW RISK' : 'HIGH RISK'}</div>
-              <div className="mt-4 h-2 bg-blue-800 rounded-full overflow-hidden">
-                <div className={`h-full transition-all duration-1000 ${transactions.length > 50 ? 'bg-green-400 w-full' : 'bg-red-400 w-1/3'}`}></div>
+              <h3 className="font-bold mb-1 text-sm uppercase tracking-widest opacity-80">Churn Prediction</h3>
+              <p className="text-blue-200 text-xs mb-4 italic">Recency · Frequency · Spend</p>
+              <div className="flex items-end gap-3 mb-4">
+                <div className={`text-4xl font-black ${churnColor}`}>{churnScore}</div>
+                <div className="text-lg font-semibold mb-1 opacity-90">{churnLabel}</div>
+              </div>
+              <div className="h-2 bg-blue-800 rounded-full overflow-hidden mb-4">
+                <div
+                  className={`h-full rounded-full transition-all duration-1000 ${churnBarColor}`}
+                  style={{ width: `${churnScore}%` }}
+                />
+              </div>
+              <div className="space-y-1 text-xs text-blue-200">
+                <div className="flex justify-between">
+                  <span>Trips</span><span className="font-medium text-white">{totalBaskets}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Total spend</span><span className="font-medium text-white">${totalSpend.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Avg trip</span><span className="font-medium text-white">${avgBasket.toFixed(2)}</span>
+                </div>
               </div>
             </div>
           </div>
