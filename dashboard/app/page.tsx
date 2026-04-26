@@ -267,7 +267,7 @@ export default function Home() {
                       tickFormatter={(v) => `$${v}`}
                     />
                     <Tooltip
-                      formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Weekly Spend']}
+                      formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Monthly Spend']}
                       contentStyle={{ background: '#1a2030', border: '1px solid #222d42', borderRadius: 10, fontSize: 12, color: '#e2e8f0' }}
                       cursor={{ stroke: '#3b82f6', strokeWidth: 1, strokeDasharray: '4 2' }}
                     />
