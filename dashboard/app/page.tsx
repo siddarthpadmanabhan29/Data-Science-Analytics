@@ -39,7 +39,6 @@ export default function Home() {
     }, 1000);
   };
 
-  // --- DATA CALCULATIONS ---
   const totalSpend = transactions.reduce((sum, txn: any) => sum + txn.spend, 0);
   const totalBaskets = new Set(transactions.map((t: any) => t.basketNum)).size;
   const avgBasket = totalBaskets > 0 ? totalSpend / totalBaskets : 0;
@@ -81,9 +80,9 @@ export default function Home() {
 
         {/* Req #2: User Access Fields */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-white p-6 rounded-2xl shadow-sm mb-8">
-          <input className="border border-gray-300 p-3 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 outline-none shadow-sm text-sm" placeholder="Username" />
-          <input className="border border-gray-300 p-3 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 outline-none shadow-sm text-sm" type="password" placeholder="Password" />
-          <input className="border border-gray-300 p-3 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 outline-none shadow-sm text-sm" type="email" placeholder="Email" />
+          <input className="border border-gray-300 p-3 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 outline-none shadow-sm" placeholder="Username" />
+          <input className="border border-gray-300 p-3 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 outline-none shadow-sm" type="password" placeholder="Password" />
+          <input className="border border-gray-300 p-3 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 outline-none shadow-sm" type="email" placeholder="Email" />
           <button onClick={handleUpdateProfile} className="bg-gray-800 text-white font-bold py-3 px-6 rounded-xl hover:bg-black transition-all">
             {profileStatus || 'Update Profile'}
           </button>        
@@ -92,7 +91,7 @@ export default function Home() {
         {/* Req #5: Data Loading Section */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-dashed border-blue-300 mb-8">
           <h3 className="text-sm font-bold text-blue-800 uppercase mb-4 flex items-center">
-            Data Load Ingestion
+            <span className="mr-2"></span>Data Load Ingestion
           </h3>
           <div className="flex flex-wrap gap-4">
             {["Transactions", "Households", "Products"].map((type) => (
@@ -112,7 +111,9 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Dashboard Area */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Search Box*/}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex gap-4 items-center">
               <input 
                 type="number" 
@@ -129,9 +130,10 @@ export default function Home() {
               </button>
             </div>
 
+            {/* Table */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 border-b border-gray-100 bg-gray-50 font-bold text-gray-600">Transaction Data</div>
-              <div className="max-h-[400px] overflow-y-auto font-mono text-xs">
+              <div className="max-h-[400px] overflow-y-auto">
                 <table className="w-full text-left">
                   <thead className="sticky top-0 bg-white shadow-sm">
                     <tr className="text-[10px] uppercase text-gray-400 border-b">
@@ -143,10 +145,10 @@ export default function Home() {
                   </thead>
                   <tbody>
                     {transactions.map((txn: any, i) => (
-                      <tr key={i} className="border-t border-gray-100 hover:bg-blue-50 font-medium">
-                        <td className="p-4">{txn.basketNum}</td>
+                      <tr key={i} className="border-t border-gray-100 hover:bg-blue-50 text-sm font-medium">
+                        <td className="p-4 font-mono">{txn.basketNum}</td>
                         <td className="p-4 text-gray-500">{txn.date}</td>
-                        <td className="p-4 text-gray-700">{txn.product?.commodity}</td>
+                        <td className="p-4">{txn.product?.commodity}</td>
                         <td className="p-4 text-green-600 font-bold">${txn.spend.toFixed(2)}</td>
                       </tr>
                     ))}
@@ -179,17 +181,12 @@ export default function Home() {
             </div>
 
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-              <h3 className="font-bold text-gray-700 mb-4 text-sm uppercase tracking-wider text-center">Top Spend Categories</h3>
-              <div className="h-[250px] w-full">
+              <h3 className="font-bold text-gray-700 mb-4 text-sm uppercase tracking-wider">Top Spend Categories</h3>
+              <div className="h-[200px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={chartData} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
+                  <BarChart data={chartData} layout="vertical">
                     <XAxis type="number" hide />
-                    <YAxis 
-                      dataKey="name" 
-                      type="category" 
-                      tick={{fontSize: 9, fontWeight: 'bold'}} 
-                      width={100}
-                    />
+                    <YAxis dataKey="name" type="category" width={80} style={{fontSize: '10px', fontWeight: 'bold'}} />
                     <Tooltip 
                       cursor={{fill: 'transparent'}} 
                       formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Total Category Spend']}
