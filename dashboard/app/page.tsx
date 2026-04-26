@@ -191,14 +191,14 @@ const churnBarColor = churnScore >= 65 ? 'bg-green-400' : churnScore >= 35 ? 'bg
             <h3 className="font-bold text-gray-700 mb-4 text-sm uppercase tracking-wider text-center">Engagement Trend</h3>
             <div className="h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={weeklySpend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <LineChart data={weeklySpend} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                   <XAxis 
                     dataKey="week" 
                     tick={{ fontSize: 9, angle: -45, textAnchor: 'end' }} 
                     minTickGap={20} 
                     stroke="#94a3b8"
-                    height={40}
+                    height={50}
                   />
                   <YAxis tick={{ fontSize: 10 }} stroke="#94a3b8" tickFormatter={(v) => `$${v}`} />
                   <Tooltip
