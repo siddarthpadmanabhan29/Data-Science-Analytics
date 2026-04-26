@@ -168,7 +168,7 @@ export default function Home() {
                     {/* Added Y-Axis to show dollar scale */}
                     <YAxis tick={{fontSize: 10}} stroke="#94a3b8" tickFormatter={(value) => `$${value}`} />
                     <Tooltip 
-                      formatter={(value: number) => [`$${value.toFixed(2)}`, 'Spend']}
+                      formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Spend']}
                       contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} 
                     />
                     <Legend verticalAlign="top" height={36}/>
@@ -192,7 +192,7 @@ export default function Home() {
                     />
                     <Tooltip 
                       cursor={{fill: 'transparent'}} 
-                      formatter={(value: number) => [`$${value.toFixed(2)}`, 'Total Category Spend']}
+                      formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Total Category Spend']}
                     />
                     <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={20}>
                       {chartData.map((entry, index) => (
