@@ -39,7 +39,7 @@ export default function Home() {
   const totalBaskets = new Set(transactions.map((t: any) => t.basketNum)).size;
   const avgBasket = totalBaskets > 0 ? totalSpend / totalBaskets : 0;
 
-  const weeklySpend = useMemo(() => {
+  const monthlySpend = useMemo(() => {
     const map: { [key: string]: number } = {};
     transactions.forEach((txn: any) => {
       const d = new Date(txn.date);
@@ -252,7 +252,7 @@ export default function Home() {
               <div className="section-label">Engagement Trend</div>
               <div style={{ height: 200 }}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={weeklySpend} margin={{ top: 4, right: 4, left: -24, bottom: 20 }}>
+                  <LineChart data={monthlySpend} margin={{ top: 4, right: 4, left: -24, bottom: 20 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e2535" />
                     <XAxis
                       dataKey="week"
