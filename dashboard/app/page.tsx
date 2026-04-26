@@ -161,7 +161,7 @@ const churnBarColor = churnScore >= 65 ? 'bg-green-400' : churnScore >= 35 ? 'bg
             {/* Table */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 border-b border-gray-100 bg-gray-50 font-bold text-gray-600">Transaction Data</div>
-              <div className="max-h-[400px] overflow-y-auto">
+              <div className="max-h-[calc(100vh-300px)] overflow-y-auto">
                 <table className="w-full text-left">
                   <thead className="sticky top-0 bg-white shadow-sm">
                     <tr className="text-[10px] uppercase text-gray-400 border-b">
@@ -193,7 +193,13 @@ const churnBarColor = churnScore >= 65 ? 'bg-green-400' : churnScore >= 35 ? 'bg
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={weeklySpend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                  <XAxis dataKey="week" tick={{ fontSize: 9 }} minTickGap={20} stroke="#94a3b8" />
+                  <XAxis 
+                    dataKey="week" 
+                    tick={{ fontSize: 9, angle: -45, textAnchor: 'end' }} 
+                    minTickGap={20} 
+                    stroke="#94a3b8"
+                    height={40}
+                  />
                   <YAxis tick={{ fontSize: 10 }} stroke="#94a3b8" tickFormatter={(v) => `$${v}`} />
                   <Tooltip
                     formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Weekly Spend']}
