@@ -53,14 +53,35 @@ export default function Home() {
   }, [transactions]);
 
   const churnScore = useMemo(() => {
-    if (transactions.length === 0) return 0;
-    const dates = transactions.map((t: any) => new Date(t.date).getTime()).filter(Boolean);
-    const daysSinceLast = dates.length ? Math.floor((Date.now() - Math.max(...dates)) / 86400000) : 30;
-    const recency = Math.max(0, Math.min(1, (30 - daysSinceLast) / 30));
-    const frequency = Math.min(1, totalBaskets / 20);
-    const spend = Math.min(1, totalSpend / 500);
-    return Math.round((recency * 0.4 + frequency * 0.35 + spend * 0.25) * 100);
-  }, [transactions, totalBaskets, totalSpend]);
+  if (transactions.length === 0) return 0;
+
+  const dates = transactions.map((t: any) => new Date(t.date).getTime()).filter(Boolean);
+  const allDates = dates.sort((a, b) => a - b);
+  const lastDate = Math.max(...allDates);
+  const firstDate = Math.min(...allDates);
+
+  // Recency: how close to the end of their own transaction history (not today)
+  const totalSpan = lastDate - firstDate || 1;
+  const recentThreshold = firstDate + totalSpan * 0.75;
+  const recentTxns = allDates.filter(d => d >= recentThreshold).length;
+  const recency = Math.min(1, recentTxns / (transactions.length * 0.25 + 1));
+
+  // Frequency: baskets per month over their active period
+  const monthsActive = Math.max(1, (lastDate - firstDate) / (1000 * 60 * 60 * 24 * 30));
+  const tripsPerMonth = totalBaskets / monthsActive;
+  const frequency = Math.min(1, tripsPerMonth / 4); // 4 trips/month = max engagement
+
+  // Spend consistency: avg basket vs overall avg (are they spending more or less over time?)
+  const recentTxnSpend = transactions
+    .filter((t: any) => new Date(t.date).getTime() >= recentThreshold)
+    .reduce((s: number, t: any) => s + t.spend, 0);
+  const earlyTxnSpend = transactions
+    .filter((t: any) => new Date(t.date).getTime() < recentThreshold)
+    .reduce((s: number, t: any) => s + t.spend, 0);
+  const spendTrend = earlyTxnSpend > 0 ? Math.min(1, recentTxnSpend / earlyTxnSpend) : 0.5;
+
+  return Math.round((recency * 0.4 + frequency * 0.35 + spendTrend * 0.25) * 100);
+}, [transactions, totalBaskets, totalSpend]);
 
   const churnLabel = churnScore >= 65 ? 'Low Risk' : churnScore >= 35 ? 'Medium Risk' : 'High Risk';
   const churnColor = churnScore >= 65 ? '#22c55e' : churnScore >= 35 ? '#eab308' : '#ef4444';
